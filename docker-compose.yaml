@@ -1,17 +1,56 @@
-version: '3'
+version: '3.8'
 
-services: 
-  gorocks:
+services:
+  app:
     build:
-      context: ./gorocks
-      dockerfile: Dockerfile
-    image: leooliveira1159/fullcycle
-    container_name: gorocks
+      context: ./node
+    container_name: app
+    image: leooliveira1159/nginxnode
     networks:
-      - gorocksnet
+      - node-network
+    volumes:
+      - ./node:/usr/src/app
+      - /usr/src/app/node_modules
+    tty: true
     ports:
-      - "8080:80"
+      - "8080:3000"
+    restart: always
+    depends_on:
+      - db
+    links:
+      - db
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 15s docker-entrypoint.sh
+    command: "node ./index.js"
+  
+  appnginx:
+    build:
+      context: nginx
+    container_name: appnginx
+    networks:
+      - node-network
+    volumes:
+      - ./node:/usr/src/app
+    tty: true
+    ports:
+      - "3000:3000"
+    depends_on:
+      - app
+
+  db:
+    image: "mysql:5.7.32"
+    command: --innodb-use-native-aio=0 --explicit_defaults_for_timestamp=1
+    container_name: db
+    restart: always
+    tty: true
+    volumes:
+      - "./mysql:/docker-entrypoint-initdb.d/mysql"
+      - "./setup.sql:/docker-entrypoint-initdb.d/setup.sql"
+    environment:
+      MYSQL_DATABASE: 'nodedb'
+      MYSQL_ROOT_PASSWORD: 'root'
+    networks:
+      - node-network
 
 networks:
-  gorocksnet:
+  node-network:
     driver: bridge

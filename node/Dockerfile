@@ -2,14 +2,14 @@ FROM node:latest
 
 WORKDIR /usr/src/app
 
-#RUN apt-get update && \
-#    sudo apt-get install wget -y
-
-COPY ./package*.json ./
+RUN apt-get update && \
+    apt-get install wget -y
 
 RUN npm install mysql
 
 RUN npm install
+
+COPY ./package*.json ./
 
 COPY ./ .
 
@@ -20,4 +20,4 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 
 EXPOSE 3000
 
-CMD ["node", "index.js"]
+#CMD ["node", "index.js"]
