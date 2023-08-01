@@ -15,5 +15,5 @@ Suba tudo em um repositório e faça a entrega.
 * A linguagem de programação para este desafio é Node/JavaScript.
 
 
-Imagem no Docker HUB:<br>
+<h4>Imagem no Docker HUB:<h4><br>
 leooliveira1159/nginxnode
