@@ -5,11 +5,11 @@ WORKDIR /usr/src/app
 RUN apt-get update && \
     apt-get install wget -y
 
+COPY ./package*.json ./
+
 RUN npm install mysql
 
 RUN npm install
-
-COPY ./package*.json ./
 
 COPY ./ .
 
